@@ -14,8 +14,8 @@ Convierte cualquier PDF (digital, escaneado o mixto) en **Markdown troceado por 
 Requisitos: **Python 3.9+**. Las librerías se instalan solas la primera vez, o a mano:
 
 ```bash
-git clone <url-de-este-repo>
-cd <carpeta-del-repo>
+git clone https://github.com/Mad-AI-Lab/pdf-a-markdown-ia.git
+cd pdf-a-markdown-ia
 pip install -r requirements.txt
 ```
 
