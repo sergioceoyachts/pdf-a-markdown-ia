@@ -1,0 +1,21 @@
+# PDFs del usuario y resultados (pueden tener derechos de autor o datos personales)
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
+comparativa/
+
+# Idiomas de OCR (se descargan solos)
+tessdata/*
+!tessdata/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
