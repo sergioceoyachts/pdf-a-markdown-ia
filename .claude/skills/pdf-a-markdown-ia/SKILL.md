@@ -1,113 +1,115 @@
 ---
 name: pdf-a-markdown-ia
-description: "Convierte cualquier PDF (digital, escaneado o mixto) en Markdown por páginas para trabajar con cualquier IA (Claude, ChatGPT, Gemini, Copilot, modelos locales) gastando el mínimo de tokens. Guarda imágenes, planos eléctricos, esquemas y tablas aparte en el formato más ligero (WebP sin pérdida para planos y con pérdida solo para fotos), con referencias cruzadas a su texto y posición. Hace OCR local y gratuito con Tesseract en páginas escaneadas y textos dentro de imágenes. También responde preguntas sobre documentos ya convertidos. Triggers: 'convierte este PDF', 'pasa el manual a markdown', 'PDF escaneado a md', 'prepara este folleto para ChatGPT/Gemini/Claude', 'extrae planos y tablas del PDF', 'haz OCR del PDF', 'manual de instalación a markdown', 'quiero usar este PDF con IA sin gastar tokens', 'procesa los PDF de input', 'convert this PDF to markdown', o cualquier pregunta sobre un documento ya convertido en output/."
+description: "Converts any PDF (digital, scanned or mixed) into page-split Markdown to work with any AI (Claude, ChatGPT, Gemini, Copilot, local models) using as few tokens as possible. Saves images, wiring diagrams, schematics and tables apart in the lightest format (lossless WebP for diagrams, lossy only for photos), cross-referenced to their text and position. Runs free local OCR with Tesseract on scanned pages and text inside images. Also answers questions about already converted documents. Triggers: 'convert this PDF to markdown', 'scanned PDF to md', 'prepare this leaflet for ChatGPT/Gemini/Claude', 'extract diagrams and tables from the PDF', 'OCR this PDF', 'installation manual to markdown', 'use this PDF with AI without wasting tokens', 'process the PDFs in input', 'convierte este PDF', 'pasa el manual a markdown', or any question about a document already converted in output/."
 ---
 
-# PDF a Markdown para cualquier IA
+# PDF to Markdown for any AI
 
-Convierte un PDF en un índice ligero y una página `.md` por cada página del PDF. Las figuras, los planos y las tablas se guardan aparte, en el formato más pequeño que no pierde detalle, y quedan enlazados al texto y a la posición donde estaban. Funciona en local y es gratis: no envía el PDF a ningún servicio.
+Converts a PDF into a lightweight index and one `.md` file per PDF page. Figures, diagrams and tables are saved apart, in the smallest format that keeps detail, and stay linked to the text and position where they were. Works locally and for free: the PDF is never sent to any service.
 
-**Regla fundamental: el texto nativo del PDF es intocable. No se reescribe, resume, traduce, corrige ni reordena. Lo que sale del OCR es una lectura de máquina, no texto original: siempre va marcado `⟨ocr N %⟩` y nunca se presenta como literal.**
+Always reply in the user's language. Output files and labels are in Spanish; their meaning is given in brackets below.
 
-Todos los comandos se ejecutan desde la **raíz del kit** (la carpeta que contiene `scripts/`, `input/` y `output/`).
+**Golden rule: the PDF's native text is untouchable. It is never rewritten, summarised, translated, corrected or reordered. OCR output is a machine reading, not original text: it is always tagged `⟨ocr N %⟩` and never presented as verbatim.**
 
----
-
-## Paso 1. Localizar el PDF
-
-1. Si el usuario da una ruta, usa esa.
-2. Si no, busca `input/*.pdf`.
-3. Si no hay PDFs, dile: *"Copia el PDF en la carpeta `input/` (o dime su ruta) y lo convierto."*
-4. Si pide la salida en otra carpeta, usa `--out "<carpeta>"`. Se crea una subcarpeta con el nombre original del PDF.
-
-Idiomas del OCR: por defecto `spa+eng`. Si el PDF está claramente en otro idioma, añádelo, por ejemplo `--idiomas spa+eng+fra`. Códigos frecuentes: `spa`, `eng`, `fra`, `deu`, `ita`, `por`, `cat`, `nld`.
+All commands run from the **kit root** (the folder containing `scripts/`, `input/` and `output/`).
 
 ---
 
-## Paso 2. Convertir
+## Step 1. Find the PDF
 
-Avisa: *"Convirtiendo… La primera vez instalo lo necesario (todo gratis)."* En un manual de cientos de páginas tarda unos minutos.
+1. If the user gives a path, use it.
+2. Otherwise, look for `input/*.pdf`.
+3. If there are no PDFs, say: *"Copy the PDF into the `input/` folder (or tell me its path) and I'll convert it."*
+4. If they want the output elsewhere, use `--out "<folder>"`. A subfolder named after the original PDF is created.
+
+OCR languages: `spa+eng` by default. If the PDF is clearly in another language, add it, e.g. `--idiomas spa+eng+fra`. Common codes: `spa`, `eng`, `fra`, `deu`, `ita`, `por`, `cat`, `nld`.
+
+---
+
+## Step 2. Convert
+
+Tell the user: *"Converting… The first time I install what's needed (all free)."* A manual with hundreds of pages takes a few minutes.
 
 ```bash
-python scripts/pdf_to_md.py input/                                  # todos los PDF de input/
+python scripts/pdf_to_md.py input/                                  # every PDF in input/
 python scripts/pdf_to_md.py "input/manual.pdf" --idiomas spa+eng+fra
-python scripts/pdf_to_md.py "input/manual.pdf" --out "D:/destino"
+python scripts/pdf_to_md.py "input/manual.pdf" --out "D:/destination"
 ```
 
-| Opción | Efecto |
+| Option | Effect |
 |---|---|
-| `--ocr auto` (por defecto) | OCR en páginas escaneadas, en texto dentro de imágenes y en tablas con texto dibujado |
-| `--ocr todo` | Además, OCR de los dibujos vectoriales que ya tienen texto |
-| `--ocr no` | Sin OCR (más rápido) |
-| `--dpi 200` | Figuras más nítidas. Los planos vectoriales se generan siempre a un mínimo de 200 |
-| `--completo` | Añade `documento-completo.md`. Solo si el usuario lo pide |
-| `--motor libre` (por defecto) | pdfplumber (MIT) + pypdfium2 (Apache/BSD). Licencias permisivas, apto para uso comercial |
-| `--motor pymupdf` | Motor alternativo con PyMuPDF (**AGPL-3.0**). Opcional, para comparar |
+| `--ocr auto` (default) | OCR on scanned pages, text inside images and tables with drawn text |
+| `--ocr todo` | Also OCR on vector drawings that already contain text |
+| `--ocr no` | No OCR (faster) |
+| `--dpi 200` | Sharper figures. Vector diagrams are always rendered at 200 minimum |
+| `--completo` | Adds `documento-completo.md` (full document). Only if the user asks |
+| `--motor libre` (default) | pdfplumber (MIT) + pypdfium2 (Apache/BSD). Permissive licences, fine for commercial use |
+| `--motor pymupdf` | Alternative engine with PyMuPDF (**AGPL-3.0**). Optional, for comparison |
 
-Comparar los dos motores: `python scripts/comparar_motores.py "<carpeta con PDFs>"` (necesita `pymupdf` y `psutil`).
+Compare both engines: `python scripts/comparar_motores.py "<folder with PDFs>"` (needs `pymupdf` and `psutil`).
 
-### Dependencias (todas gratuitas, sin registro)
-- **pdfplumber, pypdfium2 y Pillow:** el script las instala solo con pip la primera vez.
-- **Tesseract OCR:** si hace falta y no está, en Windows el script intenta instalarlo con `winget` (Windows pedirá permiso de administrador). Si no se instala, la conversión **sigue igualmente** y avisa. Manual: Windows `winget install -e --id UB-Mannheim.TesseractOCR` · macOS `brew install tesseract` · Linux `sudo apt install tesseract-ocr`.
-- **Idiomas del OCR:** se descargan solos del repositorio oficial `tesseract-ocr/tessdata_fast` a `tessdata/`.
+### Dependencies (all free, no sign-up)
+- **pdfplumber, pypdfium2 and Pillow:** the script installs them with pip on first run.
+- **Tesseract OCR:** if needed and missing, on Windows the script tries to install it with `winget` (Windows will ask for admin permission). If it cannot, the conversion **still runs** and warns. Manual: Windows `winget install -e --id UB-Mannheim.TesseractOCR` · macOS `brew install tesseract` · Linux `sudo apt install tesseract-ocr`.
+- **OCR languages:** downloaded automatically from the official `tesseract-ocr/tessdata_fast` repository into `tessdata/`.
 
-**Nunca uses ni propongas servicios de pago o con registro:** OCR en la nube, APIs de IA ni conversores online.
+**Never use or suggest paid or sign-up services:** cloud OCR, AI APIs or online converters.
 
-Si falla:
-- `python` no existe → repite con `py` y, si tampoco, con `python3`. En Windows, `scripts\ejecutar-python.cmd scripts/pdf_to_md.py input/` prueba los tres. Si no hay ninguno, explica cómo instalar Python desde python.org marcando «Add python.exe to PATH».
-- «… se ha instalado, pero este Python no lo ve todavía» → ejecuta el mismo comando otra vez.
-- PDF con contraseña → pide una copia sin protección.
-
----
-
-## Paso 3. Verificar (obligatorio)
-
-1. Lee `output/<doc>/_validacion.md`.
-2. **La cobertura debe ser 100 % con 0 referencias rotas.** La cobertura se mide contra lo que de verdad queda escrito en `pages/` y `tables/`. Las cabeceras, los pies y los números de página se omiten a propósito y no cuentan, así que **cualquier palabra listada en «Palabras no localizadas» falta de verdad**. Para cada página listada, ábrela en el PDF y copia literalmente lo que falte en su sitio de `pages/pNNN.md` (o de `tables/…md` si es una celda). No cambies nada más. Después díselo al usuario: qué páginas y qué faltaba.
-3. **Palabras duplicadas: debe ser 0.** Si hay alguna, abre la página: suele ser texto que sale a la vez como párrafo y dentro de una tabla. Deja cada texto una sola vez, en el sitio que ocupa en el PDF.
-   **Palabras contiguas que se separan:** compara la tabla con el PDF. Si el script ha separado algo que va junto (un valor de su unidad, un código de su significado), júntalo en la celda correcta. Si es una columna real de la tabla, está bien así. Crítico en esquemas eléctricos y tablas técnicas.
-4. **Símbolos gráficos (si `INDICE.md` tiene la sección «Símbolos gráficos»).** `⟦x⟧` es un glifo de una fuente de pictogramas, no la letra x. Abre cada imagen `images/glifo-*` y sustituye «(sin describir)» en la tabla del INDICE por lo que se ve: el carácter equivalente y su nombre (`≥ mayor o igual`, `● punto relleno`). Pon lo mismo en `"meaning"` de `symbols` en `manifest.json`. No toques el texto de las páginas. Si no se distingue, escribe «(no se distingue)».
-5. **Sección OCR:** por debajo de 80 % de confianza, avisa de que esa página tiene lecturas poco fiables y muestra las «lecturas dudosas».
-6. **Avisos «tabla con texto en trazos vectoriales»:** las celdas completadas por OCR van marcadas `⟨ocr⟩`. Si quedan celdas vacías o dudosas, ofrece revisarlas leyendo la imagen de la tabla y marca lo corregido `⟨img⟩valor`.
-7. **«OCR no disponible»:** explica qué páginas quedaron solo como imagen y da el comando de instalación.
-8. Por muestreo, abre una figura de plano y comprueba que el recorte incluye el plano entero y sus cotas.
+If it fails:
+- `python` does not exist → retry with `py`, then `python3`. On Windows, `scripts\ejecutar-python.cmd scripts/pdf_to_md.py input/` tries all three. If none exists, explain how to install Python from python.org ticking «Add python.exe to PATH».
+- «… se ha instalado, pero este Python no lo ve todavía» (installed, but this Python can't see it yet) → run the same command again.
+- Password-protected PDF → ask for an unprotected copy.
 
 ---
 
-## Paso 4. Describir figuras (opcional, recomendado en planos y montajes)
+## Step 3. Validate (mandatory)
 
-Pregunta: *"¿Quieres que describa las figuras? Lo hago una vez y después ninguna IA necesitará abrir las imágenes, lo que ahorra muchos tokens."*
-
-Si acepta, para cada figura (`manifest.json` → `items` de tipo `figure` sin `"repeated": true`):
-1. Ábrela.
-2. Escribe 1 o 2 líneas factuales. En planos eléctricos: bornes, colores de cable, conexiones y símbolos visibles. Ejemplo: *"Regleta D de 3 polos: L (marrón) a borne 1, N (azul) a borne 2, PE (verde-amarillo) a borne 3; alimentación 230 V~ 50 Hz."*
-3. Añade ` · desc: …` a la línea en cursiva bajo la imagen en `pages/pNNN.md`, y lo mismo en `"description"` del manifest.
-4. Solo lo visible. Si algo es ambiguo, «(no se distingue)». Nunca deduzcas conexiones, medidas o pasos que no estén dibujados o escritos.
-
----
-
-## Paso 5. Presentar el resultado
-
-- Ruta de salida, número de páginas, figuras y tablas, y tamaño total de las imágenes.
-- Tokens estimados en total y de la página más pesada.
-- Cobertura, resumen del OCR (páginas, confianza media) y avisos.
-- Cómo usarlo con cada IA: ver `LEEME-IA.md`.
-
-Ofrece: describir figuras, más resolución, otro idioma de OCR o convertir otro PDF.
+1. Read `output/<doc>/_validacion.md`.
+2. **Coverage must be 100 % with 0 broken references.** Coverage is measured against what is actually written in `pages/` and `tables/`. Headers, footers and page numbers are left out on purpose and do not count, so **any word listed under «Palabras no localizadas» (words not found) is really missing**. For each listed page, open it in the PDF and copy what is missing verbatim into its place in `pages/pNNN.md` (or `tables/…md` if it is a cell). Change nothing else. Then tell the user which pages and what was missing.
+3. **Duplicated words: must be 0.** If there are any, open the page: it is usually text that appears both as a paragraph and inside a table. Keep each text once, where it sits in the PDF.
+   **Adjacent words split apart:** compare the table with the PDF. If the script split something that belongs together (a value and its unit, a code and its meaning), join it in the right cell. If it is a real table column, leave it. Critical in wiring diagrams and technical tables.
+4. **Graphic symbols (if `INDICE.md` has a «Símbolos gráficos» section).** `⟦x⟧` is a glyph from a pictogram font, not the letter x. Open each `images/glifo-*` image and replace «(sin describir)» (not described) in the INDICE table with what you see: the equivalent character and its name (`≥ greater than or equal`, `● filled dot`). Put the same in `"meaning"` under `symbols` in `manifest.json`. Do not touch the page text. If it cannot be made out, write «(no se distingue)» (cannot be made out).
+5. **OCR section:** below 80 % confidence, warn that the page has unreliable readings and show the «lecturas dudosas» (doubtful readings).
+6. **«tabla con texto en trazos vectoriales» warnings** (table with text drawn as vector strokes): cells filled by OCR are tagged `⟨ocr⟩`. If cells remain empty or doubtful, offer to review them by reading the table image and tag corrections `⟨img⟩value`.
+7. **«OCR no disponible»** (OCR not available): explain which pages stayed as images only and give the install command.
+8. Spot-check: open a diagram figure and check the crop includes the whole diagram and its dimensions.
 
 ---
 
-## Modo consulta (documento ya convertido)
+## Step 4. Describe figures (optional, recommended for diagrams and assembly drawings)
 
-1. Lee **solo** `output/<doc>/INDICE.md`. Su *Contenido* da el rango de páginas de cada capítulo (`→ p71–79`).
-2. Si el capítulo deja clara la zona, lee únicamente esas `pages/pNNN.md`.
-3. Si no, busca con grep en `output/<doc>/pages/`:
-   - **Ordena primero las páginas con coincidencias en texto nativo y después las que solo coinciden en líneas `⟨ocr`** (lecturas de capturas, placas, fotos, tablas dibujadas). No las descartes: a veces la respuesta solo está ahí.
-   - Con muchas coincidencias, acota con términos más específicos.
-4. `paginas.md` (una línea por página) solo si el índice y la búsqueda no bastan.
-5. Abre una imagen solo si la respuesta depende de ella y no tiene `desc`.
-6. Cita la página y el id: *"Esquema de conexión (p2, figura p002-f1)"*. Si la página empieza con *Cabecera/pie: …*, esa línea indica a qué sección pertenece.
-7. Si la respuesta se apoya en texto `⟨ocr⟩`, dilo y da la confianza.
-8. `⟦x⟧` es un símbolo gráfico, no una letra: tradúcelo con la tabla «Símbolos gráficos» del INDICE (`cos ϕ ⟦u⟧ 0,8` → `cos ϕ ≥ 0,8`).
-9. Evita `manifest.json` y `documento-completo.md`: son lo más caro.
-10. Si algo no está en el documento, dilo. No inventes, y menos en esquemas eléctricos, medidas o avisos de seguridad.
+Ask: *"Do you want me to describe the figures? I do it once, and afterwards no AI needs to open the images, which saves a lot of tokens."*
+
+If they accept, for each figure (`manifest.json` → `items` of type `figure` without `"repeated": true`):
+1. Open it.
+2. Write 1 or 2 factual lines. In wiring diagrams: terminals, wire colours, connections and visible symbols. Example: *"3-pole terminal block D: L (brown) to terminal 1, N (blue) to terminal 2, PE (green-yellow) to terminal 3; supply 230 V~ 50 Hz."*
+3. Append ` · desc: …` to the italic line under the image in `pages/pNNN.md`, and the same in the manifest's `"description"`.
+4. Only what is visible. If something is ambiguous, «(no se distingue)». Never infer connections, measurements or steps that are not drawn or written.
+
+---
+
+## Step 5. Present the result
+
+- Output path, number of pages, figures and tables, and total image size.
+- Estimated total tokens and the heaviest page.
+- Coverage, OCR summary (pages, average confidence) and warnings.
+- How to use it with each AI: see `LEEME-IA.md`.
+
+Offer: describe figures, higher resolution, another OCR language or convert another PDF.
+
+---
+
+## Query mode (already converted document)
+
+1. Read **only** `output/<doc>/INDICE.md`. Its *Contenido* (contents) gives each chapter's page range (`→ p71–79`).
+2. If the chapter makes the area clear, read only those `pages/pNNN.md`.
+3. Otherwise, grep `output/<doc>/pages/`:
+   - **Rank pages with matches in native text first, then pages that only match in `⟨ocr` lines** (readings from screenshots, rating plates, photos, drawn tables). Do not discard them: sometimes the answer is only there.
+   - With many matches, narrow down with more specific terms.
+4. `paginas.md` (one line per page) only if the index and search are not enough.
+5. Open an image only if the answer depends on it and it has no `desc`.
+6. Cite the page and id: *"Connection diagram (p2, figure p002-f1)"*. If the page starts with *Cabecera/pie: …* (header/footer), that line tells which section it belongs to.
+7. If the answer relies on `⟨ocr⟩` text, say so and give the confidence.
+8. `⟦x⟧` is a graphic symbol, not a letter: translate it with the «Símbolos gráficos» table in INDICE.md (`cos ϕ ⟦u⟧ 0,8` → `cos ϕ ≥ 0,8`).
+9. Avoid `manifest.json` and `documento-completo.md`: they are the most expensive.
+10. If something is not in the document, say so. Never invent, especially in wiring diagrams, measurements or safety warnings.

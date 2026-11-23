@@ -1,26 +1,28 @@
-# Agente: PDF a Markdown para IA
+# Agent: PDF to Markdown for AI
 
-> Instrucciones comunes para cualquier agente de IA: OpenAI Codex, GitHub Copilot, Cursor, Windsurf, Gemini CLI, Aider, Claude Code…
-> La guía completa paso a paso está en [`.claude/skills/pdf-a-markdown-ia/SKILL.md`](.claude/skills/pdf-a-markdown-ia/SKILL.md). Léela antes de convertir.
+> Shared instructions for any AI agent: OpenAI Codex, GitHub Copilot, Cursor, Windsurf, Gemini CLI, Aider, Claude Code…
+> The full step-by-step guide is in [`.claude/skills/pdf-a-markdown-ia/SKILL.md`](.claude/skills/pdf-a-markdown-ia/SKILL.md). Read it before converting.
 
-Este proyecto convierte PDFs (digitales, escaneados o mixtos) en Markdown por páginas, con imágenes, planos y tablas aparte y referencias cruzadas, para trabajar con IA gastando el mínimo de tokens. Todo es local y gratuito.
+This project converts PDFs (digital, scanned or mixed) into page-split Markdown, with images, diagrams and tables saved apart and cross-referenced, so you can work with AI using as few tokens as possible. Everything is local and free.
 
-## Convertir
+Always reply in the user's language. Output files and some labels are in Spanish (`INDICE.md` = index, `paginas.md` = pages).
+
+## Convert
 
 ```bash
-python scripts/pdf_to_md.py input/                      # todos los PDF de input/
-python scripts/pdf_to_md.py "input/x.pdf" --idiomas spa+eng --ocr auto --out output
+python scripts/pdf_to_md.py input/                      # every PDF in input/
+python scripts/pdf_to_md.py "input/x.pdf" --idiomas eng+spa --ocr auto --out output
 ```
 
-- Si `python` no existe, usa `py` o `python3` (en Windows, `scripts\ejecutar-python.cmd` prueba los tres).
-- Dependencias gratuitas: pdfplumber, pypdfium2 y Pillow (se instalan solas) y Tesseract para el OCR. Sin Tesseract, la conversión sigue y avisa.
-- No uses servicios de pago, con registro ni en la nube.
-- Después de convertir, lee `output/<doc>/_validacion.md`. La cobertura debe ser **100 %** con 0 referencias rotas. Cada palabra de «Palabras no localizadas» falta de verdad en la salida: cópiala literalmente del PDF en su página o tabla y avisa al usuario.
+- If `python` does not exist, use `py` or `python3` (on Windows, `scripts\ejecutar-python.cmd` tries all three).
+- Free dependencies: pdfplumber, pypdfium2 and Pillow (installed automatically) and Tesseract for OCR. Without Tesseract the conversion still runs and warns.
+- Do not use paid, sign-up or cloud services.
+- After converting, read `output/<doc>/_validacion.md`. Coverage must be **100 %** with 0 broken references. Every word under «Palabras no localizadas» (words not found) is really missing from the output: copy it verbatim from the PDF into its page or table and tell the user.
 
-## Consultar un documento convertido
+## Query a converted document
 
-1. Lee **solo** `output/<doc>/INDICE.md`. Su *Contenido* da el rango de páginas de cada capítulo (`→ p71–79`).
-2. Lee únicamente los `pages/pNNN.md` necesarios. Para buscar, usa grep sobre `pages/` y ordena primero las páginas con coincidencias en texto nativo y después las que solo coinciden en líneas `⟨ocr` (no las descartes). `paginas.md` solo si lo anterior no basta.
-3. El texto es literal del PDF: no lo reescribas. `⟨ocr N %⟩` significa que se leyó por OCR y puede tener errores. `⟦x⟧` es un símbolo gráfico (●, ≥, ✓…), no la letra x: su significado está en la tabla «Símbolos gráficos» del INDICE.
-4. Abre imágenes (`images/*.webp`) solo si la respuesta depende de ellas.
-5. Cita la página y el id (`p004-f2`, `p005-t1`). No inventes nada que no esté, sobre todo en esquemas eléctricos y advertencias de seguridad.
+1. Read **only** `output/<doc>/INDICE.md`. Its *Contenido* (contents) gives each chapter's page range (`→ p71–79`).
+2. Read only the `pages/pNNN.md` you need. To search, grep `pages/` and rank pages with matches in native text first, then pages that only match in `⟨ocr` lines (do not discard them). Use `paginas.md` only if that is not enough.
+3. The text is verbatim from the PDF: do not rewrite it. `⟨ocr N %⟩` means it was read by OCR and may contain errors. `⟦x⟧` is a graphic symbol (●, ≥, ✓…), not the letter x: its meaning is in the «Símbolos gráficos» (graphic symbols) table in INDICE.md.
+4. Open images (`images/*.webp`) only if the answer depends on them.
+5. Cite the page and id (`p004-f2`, `p005-t1`). Never invent anything that is not there, especially in wiring diagrams and safety warnings.

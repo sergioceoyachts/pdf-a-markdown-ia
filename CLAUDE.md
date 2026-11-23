@@ -1,33 +1,35 @@
-# PDF a Markdown para cualquier IA
+# PDF to Markdown for any AI
 
-Este kit convierte cualquier PDF (digital, escaneado o mixto: manuales, folletos de montaje e instalación, fichas con planos eléctricos) en Markdown troceado por páginas. Imágenes, planos y tablas se guardan aparte en el formato más ligero y con referencias cruzadas. Todo es local y gratuito.
+This kit converts any PDF (digital, scanned or mixed: manuals, assembly and installation leaflets, data sheets with wiring diagrams) into page-split Markdown. Images, diagrams and tables are saved apart in the lightest format, with cross-references. Everything is local and free.
 
-## Comportamiento al iniciar
+Always reply in the user's language.
 
-Cuando el usuario escriba cualquier cosa y no haya pedido nada concreto, responde:
+## On start
 
-> **PDF → Markdown para cualquier IA**
+When the user writes anything without asking for something specific, reply:
+
+> **PDF → Markdown for any AI**
 >
-> Convierto tus PDF (también los escaneados) en archivos `.md` ligeros. El texto original queda intacto, y las imágenes, planos y tablas se guardan aparte, enlazados a su texto y posición. El resultado lo puedes usar con Claude, ChatGPT, Gemini…
+> I convert your PDFs (scanned ones too) into lightweight `.md` files. The original text stays untouched, and images, diagrams and tables are saved apart, linked to their text and position. You can use the result with Claude, ChatGPT, Gemini…
 >
-> **Copia tu PDF en la carpeta `input/` y dime "convierte".** Si está en un idioma distinto de español o inglés, dímelo para el OCR.
+> **Copy your PDF into the `input/` folder and tell me "convert".** If it is not in Spanish or English, tell me the language for OCR.
 >
-> Si ya lo convertiste, pregúntame directamente lo que necesites del documento.
+> If you already converted it, just ask me what you need from the document.
 
-Después usa la skill `pdf-a-markdown-ia` (`.claude/skills/pdf-a-markdown-ia/SKILL.md`).
+Then use the `pdf-a-markdown-ia` skill (`.claude/skills/pdf-a-markdown-ia/SKILL.md`).
 
-## Reglas al trabajar con documentos convertidos (ahorro de tokens)
+## Rules for converted documents (token saving)
 
-- Entrada siempre por `output/<doc>/INDICE.md`. Nunca leas todas las páginas «por si acaso».
-- Lee solo los `pages/pNNN.md` necesarios. Al buscar con Grep, ordena primero las coincidencias en texto nativo y después las de líneas `⟨ocr` (no las descartes).
-- `paginas.md` solo si el índice y la búsqueda no bastan.
-- Abre imágenes solo si la respuesta depende de ellas y la figura no tiene `desc`.
-- Cita siempre la página y el id (`p004-f2`, `p005-t1`).
-- El texto es literal del PDF: no lo reescribas. `⟨ocr N %⟩` = leído por OCR: avisa cuando te apoyes en ello.
-- `⟦x⟧` es un símbolo gráfico (●, ≥, ✓…), no la letra x. Tradúcelo con la tabla «Símbolos gráficos» del INDICE.
-- Nunca propongas servicios de pago, con registro o en la nube.
+- Always start from `output/<doc>/INDICE.md`. Never read every page "just in case".
+- Read only the `pages/pNNN.md` you need. When searching with Grep, rank native-text matches first, then `⟨ocr` line matches (do not discard them).
+- Use `paginas.md` only if the index and search are not enough.
+- Open images only if the answer depends on them and the figure has no `desc`.
+- Always cite the page and id (`p004-f2`, `p005-t1`).
+- The text is verbatim from the PDF: do not rewrite it. `⟨ocr N %⟩` = read by OCR: say so when you rely on it.
+- `⟦x⟧` is a graphic symbol (●, ≥, ✓…), not the letter x. Translate it with the «Símbolos gráficos» (graphic symbols) table in INDICE.md.
+- Never suggest paid, sign-up or cloud services.
 
-## Qué necesita (todo gratis)
+## Requirements (all free)
 
-- Python 3.9 o superior. pdfplumber, pypdfium2 y Pillow se instalan solos.
-- Tesseract OCR solo para escaneados o texto dentro de imágenes. En Windows se intenta instalar con `winget`. Sin él, todo lo demás funciona igual.
+- Python 3.9 or newer. pdfplumber, pypdfium2 and Pillow install themselves.
+- Tesseract OCR only for scanned PDFs or text inside images. On Windows it tries to install it with `winget`. Without it, everything else works the same.

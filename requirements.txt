@@ -1,13 +1,13 @@
-# Motor por defecto (licencias permisivas, uso comercial libre)
-pdfplumber>=0.11      # MIT (incluye pdfminer.six, MIT)
+# Default engine (permissive licences, free for commercial use)
+pdfplumber>=0.11      # MIT (includes pdfminer.six, MIT)
 pypdfium2>=4.30       # Apache-2.0 / BSD-3 (PDFium)
 pillow>=10.0          # MIT-CMU
 #
-# Opcional (no se instala por defecto):
-#   pymupdf>=1.24     # AGPL-3.0 - solo para --motor pymupdf o comparar_motores.py
-#   psutil            # solo para comparar_motores.py
+# Optional (not installed by default):
+#   pymupdf>=1.24     # AGPL-3.0 - only for --motor pymupdf or comparar_motores.py
+#   psutil            # only for comparar_motores.py
 #
-# OCR (opcional, gratis): Tesseract (Apache-2.0) no se instala con pip.
+# OCR (optional, free): Tesseract (Apache-2.0) is not installed with pip.
 #   Windows: winget install -e --id UB-Mannheim.TesseractOCR
 #   macOS:   brew install tesseract
 #   Linux:   sudo apt install tesseract-ocr

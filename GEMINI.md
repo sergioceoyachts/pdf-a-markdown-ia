@@ -1,9 +1,9 @@
-# Contexto para Gemini CLI
+# Context for Gemini CLI
 
-Las instrucciones de este proyecto son las mismas para todas las IAs y están en `AGENTS.md`. La guía completa paso a paso está en `.claude/skills/pdf-a-markdown-ia/SKILL.md`. Síguelas.
+This project's instructions are the same for every AI and live in `AGENTS.md`. The full step-by-step guide is in `.claude/skills/pdf-a-markdown-ia/SKILL.md`. Follow them, and reply in the user's language.
 
-Resumen:
-- Convertir: `python scripts/pdf_to_md.py input/` (todo local y gratis; OCR con Tesseract, idiomas `spa+eng` por defecto).
-- Verificar: `output/<doc>/_validacion.md` → cobertura 100 % y 0 referencias rotas.
-- Consultar: empieza por `output/<doc>/INDICE.md` y lee solo las páginas necesarias. Al buscar, primero coincidencias en texto nativo y después en líneas `⟨ocr⟩`.
-- El texto es literal del PDF y `⟨ocr⟩` indica que se leyó por OCR. Cita la página y el id, y no inventes.
+Summary:
+- Convert: `python scripts/pdf_to_md.py input/` (all local and free; OCR with Tesseract, `spa+eng` languages by default).
+- Check: `output/<doc>/_validacion.md` → 100 % coverage and 0 broken references.
+- Query: start from `output/<doc>/INDICE.md` and read only the pages you need. When searching, native-text matches first, then `⟨ocr⟩` lines.
+- The text is verbatim from the PDF and `⟨ocr⟩` means it was read by OCR. Cite the page and id, and never invent.

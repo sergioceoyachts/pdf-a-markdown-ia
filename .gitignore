@@ -1,11 +1,11 @@
-# PDFs del usuario y resultados (pueden tener derechos de autor o datos personales)
+# User PDFs and results (may contain copyrighted material or personal data)
 input/*
 !input/.gitkeep
 output/*
 !output/.gitkeep
 comparativa/
 
-# Idiomas de OCR (se descargan solos)
+# OCR languages (downloaded automatically)
 tessdata/*
 !tessdata/.gitkeep
 
@@ -15,7 +15,7 @@ __pycache__/
 .venv/
 venv/
 
-# Sistema
+# System
 .DS_Store
 Thumbs.db
 desktop.ini

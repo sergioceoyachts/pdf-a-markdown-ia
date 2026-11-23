@@ -1,8 +1,8 @@
-# Instrucciones para GitHub Copilot
+# Instructions for GitHub Copilot
 
-Sigue `AGENTS.md` (instrucciones comunes) y la guía completa `.claude/skills/pdf-a-markdown-ia/SKILL.md`.
+Follow `AGENTS.md` (shared instructions) and the full guide `.claude/skills/pdf-a-markdown-ia/SKILL.md`. Reply in the user's language.
 
-- Convertir: `python scripts/pdf_to_md.py input/`
-- Verificar: `output/<doc>/_validacion.md` → cobertura 100 %.
-- Consultar: entra por `output/<doc>/INDICE.md` y abre solo las `pages/pNNN.md` necesarias.
-- El texto es literal del PDF; `⟨ocr⟩` = leído por OCR; `⟦x⟧` = símbolo gráfico, no letra. Cita página e id. No inventes.
+- Convert: `python scripts/pdf_to_md.py input/`
+- Check: `output/<doc>/_validacion.md` → 100 % coverage.
+- Query: start from `output/<doc>/INDICE.md` and open only the `pages/pNNN.md` you need.
+- The text is verbatim from the PDF; `⟨ocr⟩` = read by OCR; `⟦x⟧` = graphic symbol, not a letter. Cite page and id. Never invent.

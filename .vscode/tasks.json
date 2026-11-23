@@ -4,14 +4,14 @@
     {
       "id": "idiomas",
       "type": "pickString",
-      "description": "Idiomas del OCR",
+      "description": "OCR languages",
       "options": ["spa+eng", "spa", "eng", "spa+eng+fra", "spa+eng+deu", "spa+eng+ita", "spa+eng+por", "spa+cat+eng"],
       "default": "spa+eng"
     }
   ],
   "tasks": [
     {
-      "label": "PDF → Markdown: convertir input/",
+      "label": "PDF → Markdown: convert input/",
       "type": "shell",
       "command": "python3",
       "windows": { "command": ".\\scripts\\ejecutar-python.cmd" },
@@ -21,7 +21,7 @@
       "problemMatcher": []
     },
     {
-      "label": "PDF → Markdown: sin OCR (rápido)",
+      "label": "PDF → Markdown: no OCR (fast)",
       "type": "shell",
       "command": "python3",
       "windows": { "command": ".\\scripts\\ejecutar-python.cmd" },
@@ -30,7 +30,7 @@
       "problemMatcher": []
     },
     {
-      "label": "PDF → Markdown: alta resolución + OCR completo + documento completo",
+      "label": "PDF → Markdown: high resolution + full OCR + full document",
       "type": "shell",
       "command": "python3",
       "windows": { "command": ".\\scripts\\ejecutar-python.cmd" },
@@ -39,7 +39,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Instalar Tesseract OCR (gratis)",
+      "label": "Install Tesseract OCR (free)",
       "type": "shell",
       "command": "winget",
       "args": ["install", "-e", "--id", "UB-Mannheim.TesseractOCR", "--accept-source-agreements", "--accept-package-agreements"],
