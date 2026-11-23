@@ -1,17 +1,28 @@
-# 📄 PDF → Markdown para cualquier IA
+# 📄 PDF → Markdown for any AI
 
-Convierte cualquier PDF (digital, escaneado o mixto) en **Markdown troceado por páginas**, listo para Claude, ChatGPT, Gemini, Copilot o modelos locales, **gastando el mínimo de tokens**.
+[![Release](https://img.shields.io/github/v/release/Mad-AI-Lab/pdf-a-markdown-ia)](https://github.com/Mad-AI-Lab/pdf-a-markdown-ia/releases) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE) ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 
-- 🔒 **Local y gratis.** El PDF no sale de tu ordenador. Sin APIs, sin registro.
-- 📝 **Texto original intacto.** No se resume ni se reescribe. Lo leído por OCR va marcado `⟨ocr N %⟩`.
-- 🖼️ **Figuras, planos y tablas aparte**, en WebP (sin pérdida para planos, con pérdida solo para fotos) y tablas en `.md` + `.csv`, enlazadas a su página y posición.
-- 🔍 **OCR con Tesseract** para páginas escaneadas y texto dentro de imágenes.
-- ✅ **Validación automática:** cobertura de palabras PDF → salida, referencias rotas, duplicados y confianza del OCR.
-- ⚖️ **Licencias permisivas:** motor por defecto pdfplumber (MIT) + pypdfium2 (Apache/BSD).
+🇬🇧 English · 🇪🇸 [Español](README.es.md)
 
-## Instalación
+Convert any PDF (digital, scanned or mixed) into **page-split Markdown**, ready for Claude, ChatGPT, Gemini, Copilot or local models, **using as few tokens as possible**.
 
-Requisitos: **Python 3.9+**. Las librerías se instalan solas la primera vez, o a mano:
+> **How much does it save?** On a 43-page test manual, the whole document is **~35,000 tokens**. With this kit the AI reads the index and only the page it needs: **~530 tokens, 98 % less.**
+
+![Before: a PDF page with a table. After: the same page in Markdown, with the table as a real Markdown table.](docs/before-after.png)
+
+- 🔒 **Local and free.** Your PDF never leaves your computer. No APIs, no sign-up.
+- 🤖 **Ready for AI agents.** Claude Code, Codex, Cursor, Gemini CLI and Copilot use it on their own: the repo ships their instructions (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`…). Open the folder and ask "convert this PDF". [See how](#use-it-with-your-ai)
+- 📝 **Original text untouched.** Nothing is summarised or rewritten. Text read by OCR is tagged `⟨ocr N %⟩`.
+- 🖼️ **Figures, diagrams and tables saved apart**, as WebP (lossless for diagrams, lossy only for photos) and tables as `.md` + `.csv`, linked to their page and position.
+- 🔍 **OCR with Tesseract** for scanned pages and text inside images.
+- ✅ **Automatic validation:** PDF → output word coverage, broken references, duplicates and OCR confidence.
+- ⚖️ **Permissive licences:** default engine pdfplumber (MIT) + pypdfium2 (Apache/BSD).
+
+> ℹ️ Output file names and command options are in Spanish (`INDICE.md` = index, `paginas.md` = pages, `--idiomas` = languages). The content of your PDF stays in its original language.
+
+## Installation
+
+Requirements: **Python 3.9+**. Libraries install themselves on first run, or by hand:
 
 ```bash
 git clone https://github.com/Mad-AI-Lab/pdf-a-markdown-ia.git
@@ -19,71 +30,71 @@ cd pdf-a-markdown-ia
 pip install -r requirements.txt
 ```
 
-OCR (opcional, solo para escaneados):
+OCR (optional, only for scanned PDFs):
 
-| Sistema | Comando |
+| System | Command |
 |---|---|
-| Windows | `winget install -e --id UB-Mannheim.TesseractOCR` (el script lo intenta solo) |
+| Windows | `winget install -e --id UB-Mannheim.TesseractOCR` (the script tries it for you) |
 | macOS | `brew install tesseract` |
 | Linux | `sudo apt install tesseract-ocr` |
 
-Los idiomas del OCR se descargan solos a `tessdata/`.
+OCR languages download automatically into `tessdata/`.
 
-## Uso rápido
+## Quick start
 
 ```bash
-# 1. Copia tus PDF en input/
-# 2. Convierte
+# 1. Copy your PDFs into input/
+# 2. Convert
 python scripts/pdf_to_md.py input/
-python scripts/pdf_to_md.py "input/manual.pdf" --idiomas spa+eng+fra --dpi 200
+python scripts/pdf_to_md.py "input/manual.pdf" --idiomas eng+spa+fra --dpi 200
 ```
 
-| Opción | Efecto |
+| Option | Effect |
 |---|---|
-| `--ocr auto\|todo\|no` | Cuándo hacer OCR (por defecto `auto`) |
-| `--idiomas spa+eng` | Idiomas de Tesseract |
-| `--dpi 150` | Resolución de figuras (planos vectoriales ≥ 200) |
-| `--completo` | Genera también `documento-completo.md` |
-| `--out <carpeta>` | Carpeta de salida (por defecto `output/`) |
-| `--motor libre\|pymupdf` | `libre` por defecto. `pymupdf` es opcional y AGPL |
+| `--ocr auto\|todo\|no` | When to run OCR (`auto` by default, `todo` = every page) |
+| `--idiomas eng+spa` | Tesseract languages |
+| `--dpi 150` | Figure resolution (vector diagrams ≥ 200) |
+| `--completo` | Also writes `documento-completo.md` (full document) |
+| `--out <folder>` | Output folder (`output/` by default) |
+| `--motor libre\|pymupdf` | `libre` by default. `pymupdf` is optional and AGPL |
 
-## Qué genera
+## What you get
 
 ```
-output/<nombre-del-pdf>/
-├── INDICE.md        ← punto de entrada: capítulos con su rango de páginas
-├── paginas.md       ← una línea por página (tokens, figuras, tablas, tema)
-├── pages/p001.md    ← texto literal de cada página, con figuras y tablas en su sitio
-├── images/          ← figuras y planos en WebP (id p004-f2)
-├── tables/          ← tablas en .md y .csv (id p005-t1)
-├── refs.md          ← id → página, posición, sección, texto ancla
-├── manifest.json    ← metadatos completos
-└── _validacion.md   ← cobertura, OCR y avisos
+output/<pdf-name>/
+├── INDICE.md        ← entry point: chapters with their page ranges
+├── paginas.md       ← one line per page (tokens, figures, tables, topic)
+├── pages/p001.md    ← verbatim text of each page, with figures and tables in place
+├── images/          ← figures and diagrams as WebP (id p004-f2)
+├── tables/          ← tables as .md and .csv (id p005-t1)
+├── refs.md          ← id → page, position, section, anchor text
+├── manifest.json    ← full metadata
+└── _validacion.md   ← coverage, OCR and warnings
 ```
 
-## Usarlo con tu IA
+## Use it with your AI
 
-El kit trae instrucciones para cada herramienta. Abre la carpeta del repo y pregunta:
+The kit includes instructions for each tool. Open the repo folder and ask:
 
-| Herramienta | Lee automáticamente |
+| Tool | Reads automatically |
 |---|---|
 | **Claude Code** | `CLAUDE.md` + skill `.claude/skills/pdf-a-markdown-ia/SKILL.md` |
 | **OpenAI Codex CLI, Cursor, Windsurf, Aider, Zed…** | `AGENTS.md` |
 | **Gemini CLI** | `GEMINI.md` |
 | **GitHub Copilot** | `.github/copilot-instructions.md` |
-| **ChatGPT / Gemini / Claude web, Projects, Gems** | Pega el bloque de [`LEEME-IA.md`](LEEME-IA.md), sube `INDICE.md` y después solo las páginas que pida |
+| **ChatGPT / Gemini / Claude web, Projects, Gems** | Paste the block from [`LEEME-IA.md`](LEEME-IA.md), upload `INDICE.md`, then only the pages it asks for |
 
-### Instalar solo la skill en Claude Code (para todos tus proyectos)
+### Install just the skill in Claude Code (for all your projects)
 
-Copia la carpeta `.claude/skills/pdf-a-markdown-ia/` a `~/.claude/skills/` y deja el repo clonado. La skill ejecuta `scripts/pdf_to_md.py` desde la raíz del repo.
+Copy the `.claude/skills/pdf-a-markdown-ia/` folder to `~/.claude/skills/` and keep the repo cloned. The skill runs `scripts/pdf_to_md.py` from the repo root.
 
-## Herramientas extra
+## Extra tools
 
-- `scripts/comparar_motores.py <carpeta>` compara el motor libre con PyMuPDF en tiempo, memoria y calidad. Necesita `pymupdf` y `psutil`.
-- `.vscode/tasks.json` contiene tareas de VS Code para convertir con un clic (`Ctrl+Shift+B`).
+- `scripts/comparar_motores.py <folder>` compares the free engine with PyMuPDF on time, memory and quality. Needs `pymupdf` and `psutil`.
+- `.vscode/tasks.json` has VS Code tasks to convert with one click (`Ctrl+Shift+B`).
 
-## Licencia
+## License
 
-[MIT](LICENSE). Dependencias: pdfplumber/pdfminer.six (MIT), pypdfium2/PDFium (Apache-2.0/BSD-3), Pillow (MIT-CMU), Tesseract (Apache-2.0). PyMuPDF (AGPL-3.0) es **opcional** y no se instala por defecto.
+[MIT](LICENSE). Dependencies: pdfplumber/pdfminer.six (MIT), pypdfium2/PDFium (Apache-2.0/BSD-3), Pillow (MIT-CMU), Tesseract (Apache-2.0). PyMuPDF (AGPL-3.0) is **optional** and not installed by default.
 
-> ⚠️ La conversión es una ayuda. En esquemas eléctricos, medidas y avisos de seguridad, consulta siempre el documento original.
+> ⚠️ The conversion is an aid. For wiring diagrams, measurements and safety warnings, always check the original document.
