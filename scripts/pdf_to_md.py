@@ -121,6 +121,25 @@ if MOTOR == "libre":
     import motor_libre as pymupdf  # noqa: E402
 else:
     pymupdf = _load_pymupdf()
+    # PyMuPDF conserva las ligaduras (ﬁ, ﬂ…): se pasan a letras normales para que grep las encuentre
+    _LIG = str.maketrans({"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi",
+                          "ﬄ": "ffl", "ﬅ": "st", "ﬆ": "st"})
+    _get_text_orig = pymupdf.Page.get_text
+
+    def _get_text_sin_ligaduras(self, option="text", *a, **kw):
+        r = _get_text_orig(self, option, *a, **kw)
+        if option == "dict":
+            for b in r.get("blocks", []):
+                for ln in b.get("lines", []):
+                    for sp in ln.get("spans", []):
+                        sp["text"] = sp["text"].translate(_LIG)
+        elif option == "words":
+            r = [(*w[:4], w[4].translate(_LIG), *w[5:]) for w in r]
+        elif isinstance(r, str):
+            r = r.translate(_LIG)
+        return r
+
+    pymupdf.Page.get_text = _get_text_sin_ligaduras
 Image = _load_pillow()
 Image.MAX_IMAGE_PIXELS = None   # planos muy grandes son legitimos
 

@@ -52,6 +52,10 @@ from pdfminer.layout import (LTAnno, LTChar, LTFigure,  # noqa: E402
                              LTTextBox, LTTextLine)
 from PIL import Image                                  # noqa: E402
 
+# Ligaduras tipográficas (ﬁ, ﬂ…) a letras normales: así "filtro" se encuentra con grep.
+LIGADURAS = str.maketrans({"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi",
+                           "ﬄ": "ffl", "ﬅ": "st", "ﬆ": "st"})
+
 NAME = "libre (pdfplumber + pypdfium2)"
 KEEP_OBJECTS_BUDGET = 300000  # tope total en memoria (~300 MB)
 KEEP_OBJECTS_MAX = 15000    # paginas con mas objetos no se guardan en memoria (planos enormes)
@@ -310,7 +314,7 @@ class Page:
                     if isinstance(ch, LTChar):
                         if not ch.upright:          # texto girado (cotas de planos): aparte
                             continue
-                        t = ch.get_text()
+                        t = ch.get_text().translate(LIGADURAS)
                         bb = box(ch)
                         if dup(t, bb):
                             continue
@@ -400,7 +404,7 @@ class Page:
             for run in runs:
                 text, wds, wcur, bbl = "", [], None, None
                 for along, ch, size, adv, prev_end in run:
-                    t = ch.get_text()
+                    t = ch.get_text().translate(LIGADURAS)
                     bb = box(ch)
                     if dup(t, bb):
                         continue
